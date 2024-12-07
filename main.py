@@ -28,24 +28,38 @@ with open('dictionary.txt') as f:
         if len(line) > 0:
             if len(line) == 2:
                 # 1:1 mapping of word to mft
-                mft_dictionary.update({ line[0]: CATEGORIES[line[1]] })
+                mft_dictionary.update({ line[0]: line[1] })
             else:
                 # 1:many mapping of word to mfts
-                mft_dictionary.update({ line[0]: ", ".join([CATEGORIES[mapping] for mapping in line[1:]])})
+                mft_dictionary.update({ line[0]: ",".join([mapping for mapping in line[1:]])})
 
 speech = input("Enter a speech file: ")
 
+regexes = []
+for category, foundation in CATEGORIES.items():
+    r = []
+    for stem, mfoundation in mft_dictionary.items():
+        for mf in mfoundation.split(","):
+            if category == mf:
+                r.append(stem.replace("*", ".*"))
+    regex = re.compile('\\b(' + '|'.join(r) + ')')
+    regexes.append([category, regex])
+
+# pprint.pprint(regexes)
+
 with open(speech) as speech_file:
     for line in speech_file:
-        for category, foundation in CATEGORIES.items():
-            word_count = 0
-            for stem, mfoundation in mft_dictionary.items():
-                if foundation == mfoundation:
-                    regex = re.compile(stem.replace('*', '+'))
-                    match = re.findall(regex, line)  
-                    if match != None and len(match) != 0:  
-                        print("MATCH:", match)
-                        word_count += len(match) # TODO should it be 1? this will have duplicates
-            mft_counts.update({ foundation: word_count })
+        word_count = {}
+        for word in line.split():
+            for regex in regexes:
+                match = re.findall(regex[1], word)  
+                if match != None and len(match) != 0:  
+                    print("MATCH:", match)
+                    if not regex[0] in word_count:
+                        word_count.update({ regex[0]: 1 })
+                    else:
+                        word_count[regex[0]] += 1
+            for k, v in word_count.items():
+                mft_counts.update({ CATEGORIES[k]: v })
 
 pprint.pprint(mft_counts)
