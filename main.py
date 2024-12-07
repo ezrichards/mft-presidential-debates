@@ -1,6 +1,6 @@
 import re
 import pprint
-import matplotlib.pyplot
+import matplotlib.pyplot as plt
 
 # Presidential Debate-Moral Foundations Theory Cleaner
 CATEGORIES = {
@@ -55,13 +55,28 @@ def run_mft_search(filename: str, search: str):
                     for regex in regexes:
                         match = re.findall(regex[1], word)  
                         if match != None and len(match) != 0:  
-                            print("MATCH:", match)
+                            # print("MATCH:", match)
                             if not regex[0] in word_count:
                                 word_count.update({ regex[0]: 1 })
                             else:
                                 word_count[regex[0]] += 1
                     for k, v in word_count.items():
                         mft_counts.update({ CATEGORIES[k]: v })
+    
+    plt.gcf().subplots_adjust(bottom=0.275)
+    plt.xticks(rotation=45, ha='right')
+    plt.bar(mft_counts.keys(), mft_counts.values())    
+    f = filename.replace(".txt", "") + search.replace(":", "")
+    plt.title(f"{search} Moral Foundation Frequency")
+    plt.ylabel("Frequency")
+    plt.xlabel("Moral Foundations")
+    plt.yticks(range(0, 51, 5))
+    plt.savefig(f"{f}.png")
+    plt.clf()
+
+    with open(f"{f}.csv", "w") as output:
+        for k, v in mft_counts.items():
+            output.write(f"{k},{v}\n")
 
     pprint.pprint(mft_counts)
     print("TOTAL:", sum([v for v in mft_counts.values()]))
