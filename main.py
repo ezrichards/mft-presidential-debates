@@ -1,5 +1,6 @@
 import re
 import pprint
+import matplotlib.pyplot
 
 # Presidential Debate-Moral Foundations Theory Cleaner
 CATEGORIES = {
@@ -33,8 +34,6 @@ with open('dictionary.txt') as f:
                 # 1:many mapping of word to mfts
                 mft_dictionary.update({ line[0]: ",".join([mapping for mapping in line[1:]])})
 
-speech = input("Enter a speech file: ")
-
 regexes = []
 for category, foundation in CATEGORIES.items():
     r = []
@@ -46,21 +45,51 @@ for category, foundation in CATEGORIES.items():
     regexes.append([category, regex])
 
 # pprint.pprint(regexes)
+def run_mft_search(filename: str, search: str):
+    print(f"MFT searching for {search}..")
+    with open(filename) as speech_file:
+        word_count = {}
+        for line in speech_file:
+            if search in line:
+                for word in line.split():
+                    for regex in regexes:
+                        match = re.findall(regex[1], word)  
+                        if match != None and len(match) != 0:  
+                            print("MATCH:", match)
+                            if not regex[0] in word_count:
+                                word_count.update({ regex[0]: 1 })
+                            else:
+                                word_count[regex[0]] += 1
+                    for k, v in word_count.items():
+                        mft_counts.update({ CATEGORIES[k]: v })
 
-with open(speech) as speech_file:
-    word_count = {}
-    for line in speech_file:
-        for word in line.split():
-            for regex in regexes:
-                match = re.findall(regex[1], word)  
-                if match != None and len(match) != 0:  
-                    print("MATCH:", match)
-                    if not regex[0] in word_count:
-                        word_count.update({ regex[0]: 1 })
-                    else:
-                        word_count[regex[0]] += 1
-            for k, v in word_count.items():
-                mft_counts.update({ CATEGORIES[k]: v })
+    pprint.pprint(mft_counts)
+    print("TOTAL:", sum([v for v in mft_counts.values()]))
 
-pprint.pprint(mft_counts)
-print("TOTAL:", sum([v for v in mft_counts.values()]))
+run_mft_search("speeches/kennedynixon1960.txt", "KENNEDY:")
+run_mft_search("speeches/kennedynixon1960.txt", "NIXON:")
+
+run_mft_search("speeches/carterford1976.txt", "CARTER:")
+run_mft_search("speeches/carterford1976.txt", "FORD:")
+
+run_mft_search("speeches/carterreagan1980.txt", "CARTER:")
+run_mft_search("speeches/carterreagan1980.txt", "REAGAN:")
+
+run_mft_search("speeches/bushclintonperot1992.txt", "BUSH:")
+run_mft_search("speeches/bushclintonperot1992.txt", "CLINTON:")
+run_mft_search("speeches/bushclintonperot1992.txt", "PEROT:")
+
+run_mft_search("speeches/bushkerry2004.txt", "BUSH:")
+run_mft_search("speeches/bushkerry2004.txt", "KERRY:")
+
+run_mft_search("speeches/obamaromney2012.txt", "OBAMA:")
+run_mft_search("speeches/obamaromney2012.txt", "ROMNEY:")
+
+run_mft_search("speeches/clintontrump2016.txt", "CLINTON:")
+run_mft_search("speeches/clintontrump2016.txt", "TRUMP:")
+
+run_mft_search("speeches/bidentrump2020.txt", "BIDEN:")
+run_mft_search("speeches/bidentrump2020.txt", "TRUMP:")
+
+run_mft_search("speeches/harristrump2024.txt", "HARRIS:")
+run_mft_search("speeches/harristrump2024.txt", "TRUMP:")
