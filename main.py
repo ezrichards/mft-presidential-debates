@@ -48,8 +48,8 @@ for category, foundation in CATEGORIES.items():
 # pprint.pprint(regexes)
 
 with open(speech) as speech_file:
+    word_count = {}
     for line in speech_file:
-        word_count = {}
         for word in line.split():
             for regex in regexes:
                 match = re.findall(regex[1], word)  
@@ -63,3 +63,4 @@ with open(speech) as speech_file:
                 mft_counts.update({ CATEGORIES[k]: v })
 
 pprint.pprint(mft_counts)
+print("TOTAL:", sum([v for v in mft_counts.values()]))
