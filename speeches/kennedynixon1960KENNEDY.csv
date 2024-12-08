@@ -1,8 +1,11 @@
-IngroupVirtue,13
-MoralityGeneral,13
 HarmVirtue,23
+HarmVice,5
+FairnessVirtue,8
+FairnessVice,0
+IngroupVirtue,13
 IngroupVice,4
 AuthorityVirtue,20
-FairnessVirtue,8
-HarmVice,5
 AuthorityVice,4
+PurityVirtue,0
+PurityVice,0
+MoralityGeneral,13

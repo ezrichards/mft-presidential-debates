@@ -49,6 +49,10 @@ def run_mft_search(filename: str, search: str):
     print(f"MFT searching for {search}..")
     with open(filename) as speech_file:
         word_count = {}
+        # populate categories with zeroes
+        for regex in regexes:
+            word_count.update({ regex[0]: 0 })
+
         for line in speech_file:
             if search in line:
                 for word in line.split():
