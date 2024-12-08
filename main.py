@@ -71,8 +71,8 @@ def run_mft_search(filename: str, search: str):
     plt.xticks(rotation=45, ha='right')
     plt.bar(mft_counts.keys(), mft_counts.values())    
     f = filename.replace(".txt", "") + search.replace(":", "")
-    plt.title(f"{search} Moral Foundation Frequency")
-    plt.ylabel("Frequency")
+    plt.title(f"{search} Moral Foundation Word Frequency")
+    plt.ylabel("Words Used")
     plt.xlabel("Moral Foundations")
     plt.yticks(range(0, 51, 5))
     plt.savefig(f"{f}.png")
@@ -82,7 +82,7 @@ def run_mft_search(filename: str, search: str):
         for k, v in mft_counts.items():
             output.write(f"{k},{v}\n")
 
-    pprint.pprint(mft_counts)
+    # pprint.pprint(mft_counts)
     print("TOTAL:", sum([v for v in mft_counts.values()]))
 
 run_mft_search("speeches/kennedynixon1960.txt", "KENNEDY:")
